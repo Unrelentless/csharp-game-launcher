@@ -26,6 +26,9 @@ namespace GameLauncher
         private string gameZip;
         private string gameExe;
 
+        private string Version_Url = "https://www.googleapis.com/drive/v3/files/1gMg2PNkgfSh-7hBEMfSxNG1lK68fSybK?alt=media&key=AIzaSyBbN4ZONGQjL09GA7PS2H6SZNbRGqAdmt4";
+        private string Game_Url = "https://www.googleapis.com/drive/v3/files/1ipx1P99WvKpJDn6UvRi2TZMvuRCl5ggm?alt=media&key=AIzaSyBbN4ZONGQjL09GA7PS2H6SZNbRGqAdmt4";
+
         private LauncherStatus _status;
         internal LauncherStatus Status
         {
@@ -59,8 +62,8 @@ namespace GameLauncher
 
             rootPath = Directory.GetCurrentDirectory();
             versionFile = Path.Combine(rootPath, "Version.txt");
-            gameZip = Path.Combine(rootPath, "Build.zip");
-            gameExe = Path.Combine(rootPath, "Build", "Pirate Game.exe");
+            gameZip = Path.Combine(rootPath, "Build_win.zip");
+            gameExe = Path.Combine(rootPath, "Build_win", "Otherworld.exe");
         }
 
         private void CheckForUpdates()
@@ -73,7 +76,7 @@ namespace GameLauncher
                 try
                 {
                     WebClient webClient = new WebClient();
-                    Version onlineVersion = new Version(webClient.DownloadString("https://drive.google.com/uc?export=download&id=1R3GT_VINzmNoXKtvnvuJw6C86-k3Jr5s"));
+                    Version onlineVersion = new Version(webClient.DownloadString(Version_Url));
 
                     if (onlineVersion.IsDifferentThan(localVersion))
                     {
@@ -108,11 +111,11 @@ namespace GameLauncher
                 else
                 {
                     Status = LauncherStatus.downloadingGame;
-                    _onlineVersion = new Version(webClient.DownloadString("https://drive.google.com/uc?export=download&id=1R3GT_VINzmNoXKtvnvuJw6C86-k3Jr5s"));
+                    _onlineVersion = new Version(webClient.DownloadString(Version_Url));
                 }
 
                 webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadGameCompletedCallback);
-                webClient.DownloadFileAsync(new Uri("https://drive.google.com/uc?export=download&id=1SNA_3P5wVp4tZi5NKhiGAAD6q4ilbaaf"), gameZip, _onlineVersion);
+                webClient.DownloadFileAsync(new Uri(Game_Url), gameZip, _onlineVersion);
             }
             catch (Exception ex)
             {
@@ -151,7 +154,7 @@ namespace GameLauncher
             if (File.Exists(gameExe) && Status == LauncherStatus.ready)
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo(gameExe);
-                startInfo.WorkingDirectory = Path.Combine(rootPath, "Build");
+                startInfo.WorkingDirectory = Path.Combine(rootPath, "Build_win");
                 Process.Start(startInfo);
 
                 Close();
