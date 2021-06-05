@@ -25,6 +25,7 @@ namespace GameLauncher
         private string versionFile;
         private string gameZip;
         private string gameExe;
+        private string changelogFile;
 
         private string Version_Url = "https://www.googleapis.com/drive/v3/files/1gMg2PNkgfSh-7hBEMfSxNG1lK68fSybK?alt=media&key=AIzaSyBbN4ZONGQjL09GA7PS2H6SZNbRGqAdmt4";
         private string Game_Url = "https://www.googleapis.com/drive/v3/files/1ipx1P99WvKpJDn6UvRi2TZMvuRCl5ggm?alt=media&key=AIzaSyBbN4ZONGQjL09GA7PS2H6SZNbRGqAdmt4";
@@ -42,13 +43,13 @@ namespace GameLauncher
                         PlayButton.Content = "Play";
                         break;
                     case LauncherStatus.failed:
-                        PlayButton.Content = "Update Failed - Retry";
+                        PlayButton.Content = "Update failed - retry";
                         break;
                     case LauncherStatus.downloadingGame:
-                        PlayButton.Content = "Downloading Game";
+                        PlayButton.Content = "Downloading game...";
                         break;
                     case LauncherStatus.downloadingUpdate:
-                        PlayButton.Content = "Downloading Update";
+                        PlayButton.Content = "Downloading update...";
                         break;
                     default:
                         break;
@@ -64,6 +65,7 @@ namespace GameLauncher
             versionFile = Path.Combine(rootPath, "Version.txt");
             gameZip = Path.Combine(rootPath, "Build_win.zip");
             gameExe = Path.Combine(rootPath, "Build_win", "Otherworld.exe");
+            changelogFile = Path.Combine(rootPath, "Changelog.txt");
         }
 
         private void CheckForUpdates()
@@ -162,6 +164,18 @@ namespace GameLauncher
             else if (Status == LauncherStatus.failed)
             {
                 CheckForUpdates();
+            }
+        }
+
+        private void ChangelogButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (File.Exists(changelogFile) && Status == LauncherStatus.ready)
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo(changelogFile);
+                startInfo.WorkingDirectory = rootPath;
+                startInfo.UseShellExecute = true;
+
+                Process.Start(startInfo);
             }
         }
     }
